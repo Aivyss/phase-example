@@ -45,7 +45,12 @@ func (u *accountUsecase) Signup(ctx context.Context, req request.PostAccountSign
 		return nil, err
 	}
 
-	return response.NewPostAccountSignup(1), nil
+	user, err := u.accountRepository.FindByUserID(req.UserID)
+	if err != nil {
+		return nil, err
+	}
+
+	return response.NewPostAccountSignup(user.ID), nil
 }
 
 func NewAccountUsecase(
