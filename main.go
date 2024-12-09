@@ -13,7 +13,10 @@ import (
 func main() {
 	e := echo.New()
 
-	accountHandler := handler.NewAccountHandler(usecase.NewAccountUsecase(repository.NewAccountRepository()))
+	accountHandler := handler.NewAccountHandler(usecase.NewAccountUsecase(
+		repository.NewAccountRepository(),
+		repository.NewUserKeywordRepository(nil),
+	))
 	e.POST("/account/signup", accountHandler.PostAccountSignup)
 
 	if err := e.Start(":1234"); err != nil {
