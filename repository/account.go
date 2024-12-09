@@ -9,6 +9,7 @@ import (
 
 type AccountRepository interface {
 	Insert(userID string, password string) error
+	FindByUserID(userID string) (*account.Account, error)
 }
 
 type accountRepository struct {
@@ -16,6 +17,11 @@ type accountRepository struct {
 	mutex    sync.Mutex
 	memory   map[int]account.Account
 	idSet    map[string]bool
+}
+
+func (a *accountRepository) FindByUserID(userID string) (*account.Account, error) {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (a *accountRepository) Insert(userID string, password string) error {
