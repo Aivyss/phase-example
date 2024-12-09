@@ -4,9 +4,11 @@ import (
 	"context"
 	"fmt"
 	"github.com/google/uuid"
+	"phase_example/dto"
 	"phase_example/dto/request"
 	"phase_example/dto/response"
 	"phase_example/repository"
+	"phase_example/service"
 )
 
 type AccountUsecase interface {
@@ -16,6 +18,7 @@ type AccountUsecase interface {
 type accountUsecase struct {
 	accountRepository repository.AccountRepository
 	cacheRepository   repository.CacheRepository
+	mailingService    service.MailingService
 }
 
 func (u *accountUsecase) Signup(ctx context.Context, req request.PostAccountSignup) (*response.PostAccountSignup, error) {
@@ -32,16 +35,27 @@ func (u *accountUsecase) Signup(ctx context.Context, req request.PostAccountSign
 		return nil, err
 	}
 
-	// dummy data
+	if err := u.mailingService.Send(ctx, dto.EmailInfo{
+		To:      []string{req.UserID},
+		From:    "mTq4y@example.com",
+		Subject: "認証メール",
+		Body:    "認証キー: " + key,
+		Type:    dto.TEXT,
+	}); err != nil {
+		return nil, err
+	}
+
 	return response.NewPostAccountSignup(1), nil
 }
 
 func NewAccountUsecase(
 	accountRepository repository.AccountRepository,
 	cacheRepository repository.CacheRepository,
+	mailingService service.MailingService,
 ) AccountUsecase {
 	return &accountUsecase{
 		accountRepository: accountRepository,
 		cacheRepository:   cacheRepository,
+		mailingService:    mailingService,
 	}
 }
