@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/labstack/echo/v4"
 	"phase_example/handler"
+	"phase_example/repository"
 	"phase_example/usecase"
 )
 
@@ -12,7 +13,7 @@ import (
 func main() {
 	e := echo.New()
 
-	accountHandler := handler.NewAccountHandler(usecase.NewAccountUsecase())
+	accountHandler := handler.NewAccountHandler(usecase.NewAccountUsecase(repository.NewAccountRepository()))
 	e.POST("/account/signup", accountHandler.PostAccountSignup)
 
 	if err := e.Start(":1234"); err != nil {
